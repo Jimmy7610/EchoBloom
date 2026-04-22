@@ -95,3 +95,32 @@ CREATE POLICY "Users can update prompts in their workspaces" ON public.prompts
             AND memberships.user_id = auth.uid()
         )
     );
+
+-- Table: responses
+CREATE TABLE IF NOT EXISTS public.responses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    prompt_id UUID NOT NULL REFERENCES public.prompts(id) ON DELETE CASCADE,
+    workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
+    session_id TEXT, -- To track anonymous users/visitors
+    rating_value INT,
+    emoji_value TEXT,
+    text_value TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.responses ENABLE ROW LEVEL SECURITY;
+
+-- Responses Policies
+-- 1. Anyone can insert a response (public endpoint for widget)
+CREATE POLICY "Anyone can insert responses" ON public.responses
+    FOR INSERT WITH CHECK (true);
+
+-- 2. Users can view responses in their workspaces
+CREATE POLICY "Users can view responses in their workspaces" ON public.responses
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM public.memberships
+            WHERE memberships.workspace_id = responses.workspace_id
+            AND memberships.user_id = auth.uid()
+        )
+    );
