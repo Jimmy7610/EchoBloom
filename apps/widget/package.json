@@ -1,0 +1,10 @@
+{
+  "name": "@echobloom/widget",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "echo \"TODO: widget dev script\"",
+    "build": "echo \"TODO: widget build script\""
+  }
+}
