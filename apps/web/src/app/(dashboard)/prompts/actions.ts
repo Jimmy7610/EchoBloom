@@ -68,3 +68,38 @@ export async function togglePromptStatus(promptId: string, currentStatus: string
   revalidatePath('/prompts')
   return { success: true }
 }
+
+export async function updatePrompt(id: string, formData: FormData) {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    redirect('/login')
+  }
+
+  const title = formData.get('title') as string
+  const question_text = formData.get('question_text') as string
+  const type = formData.get('type') as string
+  const trigger_type = formData.get('trigger_type') as string
+  const status = formData.get('status') as string
+
+  const { error } = await supabase
+    .from('prompts')
+    .update({
+      title,
+      question_text,
+      type,
+      trigger_type,
+      status
+    })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error updating prompt:', error)
+    redirect(`/prompts/${id}?message=Failed to update prompt`)
+  }
+
+  revalidatePath('/prompts')
+  redirect('/prompts')
+}
+

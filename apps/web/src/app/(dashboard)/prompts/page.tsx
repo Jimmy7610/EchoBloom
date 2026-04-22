@@ -72,8 +72,13 @@ export default async function PromptsPage() {
                   <td className="px-6 py-4">
                     <ToggleStatusButton promptId={prompt.id} currentStatus={prompt.status} />
                   </td>
-                  <td className="px-6 py-4 text-right text-indigo-600 font-medium hover:text-indigo-800 cursor-pointer">
-                    Edit
+                  <td className="px-6 py-4 text-right">
+                    <Link 
+                      href={`/prompts/${prompt.id}`}
+                      className="text-indigo-600 font-medium hover:text-indigo-800"
+                    >
+                      Edit
+                    </Link>
                   </td>
                 </tr>
               ))
