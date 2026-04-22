@@ -58,6 +58,52 @@ export default async function DashboardPage() {
         <p className="text-sm text-slate-500 mt-1">Overview of your real-time feedback and onboarding sentiment.</p>
       </div>
 
+      {/* Getting Started Checklist (Onboarding) */}
+      {(responses.length === 0 || activePromptsCount === 0) && (
+        <div className="bg-indigo-50 rounded-xl border border-indigo-100 p-6">
+          <h2 className="text-lg font-semibold text-indigo-900 mb-4 flex items-center gap-2">
+            🚀 Getting Started Checklist
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className={`p-4 rounded-lg border ${activePromptsCount! > 0 ? 'bg-white/50 border-emerald-200' : 'bg-white border-indigo-100'}`}>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${activePromptsCount! > 0 ? 'bg-emerald-500 text-white' : 'bg-indigo-600 text-white'}`}>
+                  {activePromptsCount! > 0 ? '✓' : '1'}
+                </div>
+                <h3 className="font-medium text-slate-900">Create a Prompt</h3>
+              </div>
+              <p className="text-xs text-slate-500 mb-3">Design your first feedback question.</p>
+              {activePromptsCount! === 0 && (
+                <a href="/prompts/create" className="text-xs font-semibold text-indigo-600 hover:underline">Create now &rarr;</a>
+              )}
+            </div>
+            
+            <div className={`p-4 rounded-lg border ${responses.length > 0 ? 'bg-white/50 border-emerald-200' : 'bg-white border-indigo-100'}`}>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${responses.length > 0 ? 'bg-emerald-500 text-white' : 'bg-indigo-600 text-white'}`}>
+                  {responses.length > 0 ? '✓' : '2'}
+                </div>
+                <h3 className="font-medium text-slate-900">Embed Widget</h3>
+              </div>
+              <p className="text-xs text-slate-500 mb-3">Install the snippet in your app.</p>
+              {responses.length === 0 && (
+                <a href="/settings" className="text-xs font-semibold text-indigo-600 hover:underline">Get code &rarr;</a>
+              )}
+            </div>
+
+            <div className={`p-4 rounded-lg border ${responses.length > 0 ? 'bg-white/50 border-emerald-200' : 'bg-white border-indigo-100'}`}>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${responses.length > 0 ? 'bg-emerald-500 text-white' : 'bg-indigo-600 text-white'}`}>
+                  {responses.length > 0 ? '✓' : '3'}
+                </div>
+                <h3 className="font-medium text-slate-900">Get Insights</h3>
+              </div>
+              <p className="text-xs text-slate-500 mb-3">AI will analyze your first response.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
