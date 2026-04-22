@@ -17,7 +17,7 @@ export function Sidebar({ userEmail, workspaceName }: { userEmail?: string, work
   ];
 
   return (
-    <aside className="w-64 bg-slate-50 border-r border-slate-200 h-screen flex flex-col fixed left-0 top-0">
+    <aside className="hidden md:flex w-64 bg-slate-50 border-r border-slate-200 h-screen flex-col fixed left-0 top-0">
       <div className="h-16 flex items-center px-6 border-b border-slate-200">
         <Link href="/" className="flex items-center gap-2 text-indigo-600 font-bold text-xl">
           <Sprout className="w-6 h-6" />

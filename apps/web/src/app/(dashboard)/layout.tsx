@@ -33,7 +33,7 @@ export default async function DashboardLayout({
   return (
     <>
       <Sidebar userEmail={user.email} workspaceName={workspaceName} />
-      <div className="pl-64 flex flex-col min-h-screen">
+      <div className="pl-0 md:pl-64 flex flex-col min-h-screen">
         <Topbar />
         <main className="flex-1 p-8">
           {children}
