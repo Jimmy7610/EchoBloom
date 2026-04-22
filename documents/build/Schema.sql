@@ -50,3 +50,48 @@ CREATE POLICY "Users can view their own memberships" ON public.memberships
 -- 2. A user can create a membership (during workspace creation)
 CREATE POLICY "Users can insert their own memberships" ON public.memberships
     FOR INSERT WITH CHECK (user_id = auth.uid());
+
+-- Table: prompts
+CREATE TABLE IF NOT EXISTS public.prompts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    question_text TEXT NOT NULL,
+    type TEXT NOT NULL, -- 'text', 'rating', 'emoji'
+    trigger_type TEXT NOT NULL, -- 'after_signup', 'first_login', 'step_completed', 'time_active'
+    status TEXT NOT NULL DEFAULT 'paused', -- 'active', 'paused'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.prompts ENABLE ROW LEVEL SECURITY;
+
+-- Prompts Policies
+-- 1. Users can view prompts in their workspaces
+CREATE POLICY "Users can view prompts in their workspaces" ON public.prompts
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM public.memberships
+            WHERE memberships.workspace_id = prompts.workspace_id
+            AND memberships.user_id = auth.uid()
+        )
+    );
+
+-- 2. Users can insert prompts in their workspaces
+CREATE POLICY "Users can insert prompts in their workspaces" ON public.prompts
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM public.memberships
+            WHERE memberships.workspace_id = workspace_id
+            AND memberships.user_id = auth.uid()
+        )
+    );
+
+-- 3. Users can update prompts in their workspaces
+CREATE POLICY "Users can update prompts in their workspaces" ON public.prompts
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM public.memberships
+            WHERE memberships.workspace_id = prompts.workspace_id
+            AND memberships.user_id = auth.uid()
+        )
+    );
