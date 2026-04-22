@@ -73,4 +73,4 @@ node scripts/seed_demo.js
 ## 📄 License
 This project is private and intended for internal use and beta testing.
 
-**Built with ❤️ by the EchoBloom Team.**
+**Built with ❤️ by Jimmy.**
