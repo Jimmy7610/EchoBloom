@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, MessageSquarePlus, Inbox, BarChart3, Settings, Sprout } from "lucide-react";
+import { LayoutDashboard, MessageSquarePlus, Inbox, BarChart3, Settings, Sprout, LogOut } from "lucide-react";
+import { signout } from "@/app/(auth)/actions";
 
-export function Sidebar() {
+export function Sidebar({ userEmail, workspaceName }: { userEmail?: string, workspaceName?: string }) {
   const pathname = usePathname();
 
   const navItems = [
@@ -45,14 +46,23 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-slate-200">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
-            JD
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs shrink-0">
+              {userEmail ? userEmail[0].toUpperCase() : "U"}
+            </div>
+            <div className="flex flex-col truncate pr-2">
+              <span className="text-sm font-medium text-slate-700 truncate">{userEmail || "User"}</span>
+              <span className="text-xs text-slate-500 truncate">{workspaceName || "Workspace"}</span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-slate-700">Jane Doe</span>
-            <span className="text-xs text-slate-500">Acme Corp</span>
-          </div>
+          <button 
+            onClick={() => signout()} 
+            className="text-slate-400 hover:text-slate-600 transition-colors shrink-0"
+            title="Sign out"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </aside>
