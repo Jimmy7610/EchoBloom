@@ -1,10 +1,12 @@
 import { createPrompt } from '../actions'
 
-export default function CreatePromptPage({
+export default async function CreatePromptPage({
   searchParams,
 }: {
-  searchParams: { message: string }
+  searchParams: Promise<{ message: string }>
 }) {
+  const params = await searchParams
+
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
@@ -14,9 +16,9 @@ export default function CreatePromptPage({
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <form action={createPrompt} className="space-y-6">
-          {searchParams?.message && (
+          {params?.message && (
             <p className="p-4 bg-rose-50 text-rose-700 rounded-md text-sm">
-              {searchParams.message}
+              {params.message}
             </p>
           )}
 

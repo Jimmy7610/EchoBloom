@@ -1,19 +1,21 @@
 import { createWorkspace } from './actions'
 
-export default function CreateWorkspacePage({
+export default async function CreateWorkspacePage({
   searchParams,
 }: {
-  searchParams: { message: string }
+  searchParams: Promise<{ message: string }>
 }) {
+  const params = await searchParams
+
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
       <form className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
         <h1 className="text-3xl font-bold mb-2 text-center text-slate-900">Welcome to EchoBloom</h1>
         <p className="text-slate-500 text-center mb-6 text-sm">Let's set up your first workspace.</p>
         
-        {searchParams?.message && (
+        {params?.message && (
           <p className="mt-4 p-4 bg-rose-50 text-rose-700 text-center rounded-md mb-4 text-sm">
-            {searchParams.message}
+            {params.message}
           </p>
         )}
 
