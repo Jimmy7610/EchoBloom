@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { generateSummary, classifyResponseSentiment } from '@echobloom/ai'
 import type { ResponseData } from '@echobloom/ai'
 import { TrendChart } from './TrendChart'
@@ -74,7 +75,7 @@ export default async function DashboardPage() {
               </div>
               <p className="text-xs text-slate-500 mb-3">Design your first feedback question.</p>
               {activePromptsCount! === 0 && (
-                <a href="/prompts/create" className="text-xs font-semibold text-indigo-600 hover:underline">Create now &rarr;</a>
+                <Link href="/prompts/create" className="text-xs font-semibold text-indigo-600 hover:underline">Create now &rarr;</Link>
               )}
             </div>
             
@@ -87,7 +88,7 @@ export default async function DashboardPage() {
               </div>
               <p className="text-xs text-slate-500 mb-3">Install the snippet in your app.</p>
               {responses.length === 0 && (
-                <a href="/settings" className="text-xs font-semibold text-indigo-600 hover:underline">Get code &rarr;</a>
+                <Link href="/settings" className="text-xs font-semibold text-indigo-600 hover:underline">Get code &rarr;</Link>
               )}
             </div>
 
