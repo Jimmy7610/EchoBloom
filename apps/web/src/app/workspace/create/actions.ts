@@ -7,10 +7,10 @@ export async function createWorkspace(formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect('/login')
+  if (!user || userError) {
+    redirect(`/login?message=${encodeURIComponent(userError?.message || 'Not authenticated')}`)
   }
 
   // Insert workspace
@@ -21,7 +21,10 @@ export async function createWorkspace(formData: FormData) {
     .single()
 
   if (workspaceError || !workspace) {
-    redirect('/workspace/create?message=Could not create workspace')
+    const msg = workspaceError?.message || 'Unknown error creating workspace'
+    const detail = workspaceError?.details || ''
+    const hint = workspaceError?.hint || ''
+    redirect(`/workspace/create?message=${encodeURIComponent(`${msg}. ${detail} ${hint}`.trim())}`)
   }
 
   // Insert membership
@@ -30,7 +33,8 @@ export async function createWorkspace(formData: FormData) {
     .insert([{ workspace_id: workspace.id, user_id: user.id, role: 'owner' }])
 
   if (membershipError) {
-    redirect('/workspace/create?message=Could not attach user to workspace')
+    const msg = membershipError?.message || 'Unknown error'
+    redirect(`/workspace/create?message=${encodeURIComponent(msg)}`)
   }
 
   redirect('/')
