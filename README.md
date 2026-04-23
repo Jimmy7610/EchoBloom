@@ -20,7 +20,7 @@ EchoBloom provides a seamless bridge between user experience and product develop
 - **Multi-Modal Prompting**: Create highly customizable prompts supporting:
   - **1-5 Star Ratings**: For quantitative satisfaction tracking.
   - **Emoji Selection**: For quick, emotional sentiment capture.
-  - **Open-Ended Text**: For rich, qualitative qualitative insights.
+  - **Open-Ended Text**: For rich, qualitative insights.
 - **AI Sentiment Intelligence**: Automatically classify every response (Positive, Neutral, Negative) and extract recurring themes using our `@echobloom/ai` engine.
 - **Interactive Trend Charts**: Visualize sentiment shifts over time with our custom 7-day stacked bar charts.
 - **Lightweight Embeddable Widget**: A performance-optimized IIFE bundle (<15KB) that works in any web environment with a single script tag.
