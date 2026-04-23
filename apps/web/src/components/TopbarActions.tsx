@@ -5,7 +5,7 @@ import { HelpCircle } from 'lucide-react'
 import { NotificationBell } from './NotificationBell'
 import { HelpModal } from './HelpModal'
 
-export function TopbarActions() {
+export function TopbarActions({ workspaceId, initialNotifications }: { workspaceId: string, initialNotifications: any[] }) {
   const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   return (
@@ -20,7 +20,7 @@ export function TopbarActions() {
 
       <div className="w-px h-6 bg-slate-200 mx-1 hidden sm:block"></div>
 
-      <NotificationBell />
+      <NotificationBell workspaceId={workspaceId} initialNotifications={initialNotifications} />
 
       <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </div>

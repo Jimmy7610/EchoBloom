@@ -2,7 +2,7 @@ import { Search, Sprout } from "lucide-react";
 import Link from "next/link";
 import { TopbarActions } from "./TopbarActions";
 
-export function Topbar() {
+export function Topbar({ workspaceId, initialNotifications }: { workspaceId: string, initialNotifications: any[] }) {
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
       <div className="flex items-center gap-4 flex-1">
@@ -21,7 +21,7 @@ export function Topbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <TopbarActions />
+        <TopbarActions workspaceId={workspaceId} initialNotifications={initialNotifications} />
       </div>
     </header>
   );

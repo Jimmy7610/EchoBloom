@@ -124,3 +124,42 @@ CREATE POLICY "Users can view responses in their workspaces" ON public.responses
             AND memberships.user_id = auth.uid()
         )
     );
+
+-- Table: notifications
+CREATE TABLE IF NOT EXISTS public.notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
+    type TEXT NOT NULL, -- 'sentiment_alert', 'milestone_1', 'milestone_10', 'prompt_activated', 'prompt_paused'
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN NOT NULL DEFAULT false,
+    related_prompt_id UUID REFERENCES public.prompts(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+
+-- Notifications Policies
+-- 1. Users can view notifications in their workspaces
+CREATE POLICY "Users can view notifications in their workspaces" ON public.notifications
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM public.memberships
+            WHERE memberships.workspace_id = notifications.workspace_id
+            AND memberships.user_id = auth.uid()
+        )
+    );
+
+-- 2. Anyone can insert notifications (to allow triggers from API/Widget)
+CREATE POLICY "Anyone can insert notifications" ON public.notifications
+    FOR INSERT WITH CHECK (true);
+
+-- 3. Users can update notifications in their workspaces (for marking as read)
+CREATE POLICY "Users can update notifications in their workspaces" ON public.notifications
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM public.memberships
+            WHERE memberships.workspace_id = notifications.workspace_id
+            AND memberships.user_id = auth.uid()
+        )
+    );

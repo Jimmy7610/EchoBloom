@@ -15,26 +15,36 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
+  let workspaceId = ""
   let workspaceName = "Acme Corp"
   
   const { data: workspace } = await supabase
     .from('workspaces')
-    .select('name')
+    .select('id, name')
     .eq('owner_user_id', user.id)
     .limit(1)
     .single()
     
   if (workspace) {
+    workspaceId = workspace.id
     workspaceName = workspace.name
   } else {
     redirect('/workspace/create')
   }
 
+  // Fetch recent notifications
+  const { data: notifications } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('workspace_id', workspaceId)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
   return (
     <>
       <Sidebar userEmail={user.email} workspaceName={workspaceName} />
       <div className="pl-0 md:pl-64 flex flex-col min-h-screen">
-        <Topbar />
+        <Topbar workspaceId={workspaceId} initialNotifications={notifications || []} />
         <main className="flex-1 p-8">
           {children}
         </main>

@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { createNotification } from '@/lib/notifications'
 
 export async function createPrompt(formData: FormData) {
   const supabase = await createClient()
@@ -55,6 +56,13 @@ export async function togglePromptStatus(promptId: string, currentStatus: string
   
   const newStatus = currentStatus === 'active' ? 'paused' : 'active'
   
+  // Fetch prompt details for the notification
+  const { data: prompt } = await supabase
+    .from('prompts')
+    .select('title, workspace_id')
+    .eq('id', promptId)
+    .single()
+
   const { error } = await supabase
     .from('prompts')
     .update({ status: newStatus })
@@ -63,6 +71,16 @@ export async function togglePromptStatus(promptId: string, currentStatus: string
   if (error) {
     console.error('Error updating prompt status:', error)
     return { success: false }
+  }
+
+  if (prompt) {
+    await createNotification({
+      workspaceId: prompt.workspace_id,
+      type: newStatus === 'active' ? 'prompt_activated' : 'prompt_paused',
+      title: newStatus === 'active' ? 'Prompt Activated' : 'Prompt Paused',
+      message: `Prompt "${prompt.title}" is now ${newStatus}.`,
+      relatedPromptId: promptId
+    })
   }
 
   revalidatePath('/prompts')

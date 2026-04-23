@@ -114,7 +114,11 @@ export function classifyRatingSentiment(rating: number): SentimentResult {
 }
 
 /** Classify sentiment for a single response (any type) */
-export function classifyResponseSentiment(response: ResponseData): SentimentResult {
+export function classifyResponseSentiment(response: {
+  rating_value?: number | null
+  emoji_value?: string | null
+  text_value?: string | null
+}): SentimentResult {
   // Priority: rating > emoji > text
   if (response.rating_value != null) {
     return classifyRatingSentiment(response.rating_value)
