@@ -12,13 +12,13 @@ export function TopbarActions({ workspaceId, initialNotifications }: { workspace
     <div className="flex items-center gap-2">
       <button 
         onClick={() => setIsHelpOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all group"
+        className="flex items-center gap-2 px-3 py-1.5 text-surface-400 hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition-all group"
       >
         <HelpCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
         <span className="text-sm font-medium hidden sm:inline">What is EchoBloom?</span>
       </button>
 
-      <div className="w-px h-6 bg-slate-200 mx-1 hidden sm:block"></div>
+      <div className="w-px h-6 bg-surface-800 mx-1 hidden sm:block"></div>
 
       <NotificationBell workspaceId={workspaceId} initialNotifications={initialNotifications} />
 
