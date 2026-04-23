@@ -37,5 +37,5 @@ export async function createWorkspace(formData: FormData) {
     redirect(`/workspace/create?message=${encodeURIComponent(msg)}`)
   }
 
-  redirect('/')
+  redirect('/dashboard')
 }
