@@ -22,8 +22,8 @@ export function TrendChart({ data }: { data: TrendDataPoint[] }) {
           const dayLabel = new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' })
 
           return (
-            <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1" title={`${d.date}: ${total} responses`}>
-              <span className="text-xs font-medium text-slate-500 mb-1">{total > 0 ? total : ''}</span>
+            <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1 group relative" title={`${d.date}: ${total} responses`}>
+              <span className="text-xs font-medium text-surface-400 mb-1 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-6">{total > 0 ? total : ''}</span>
               <div className="w-full flex flex-col-reverse items-center">
                 {negativeH > 0 && (
                   <div
@@ -44,28 +44,28 @@ export function TrendChart({ data }: { data: TrendDataPoint[] }) {
                   />
                 )}
                 {total === 0 && (
-                  <div className="w-full rounded-sm bg-slate-100" style={{ height: '4px' }} />
+                  <div className="w-full rounded-sm bg-surface-800" style={{ height: '4px' }} />
                 )}
               </div>
-              <span className="text-[10px] text-slate-400 mt-1">{dayLabel}</span>
+              <span className="text-[10px] text-surface-500 mt-1">{dayLabel}</span>
             </div>
           )
         })}
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-slate-100">
+      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-surface-800">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-sm bg-emerald-400" />
-          <span className="text-xs text-slate-500">Positive</span>
+          <span className="text-xs text-surface-400">Positive</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-sm bg-slate-300" />
-          <span className="text-xs text-slate-500">Neutral</span>
+          <span className="text-xs text-surface-400">Neutral</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-sm bg-rose-400" />
-          <span className="text-xs text-slate-500">Negative</span>
+          <span className="text-xs text-surface-400">Negative</span>
         </div>
       </div>
     </div>
