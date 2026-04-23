@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EchoBloom Dashboard",
-  description: "Understand why users drop off onboarding.",
+  title: "EchoBloom | AI-Powered Onboarding Feedback for SaaS",
+  description: "Understand why users drop off during onboarding. Capture real-time sentiment and turn in-product reactions into actionable growth insights with AI.",
 };
 
 export default async function RootLayout({

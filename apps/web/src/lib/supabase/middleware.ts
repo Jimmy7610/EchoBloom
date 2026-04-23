@@ -39,23 +39,23 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const isLandingPage = request.nextUrl.pathname === '/'
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup') || request.nextUrl.pathname.startsWith('/auth')
   const isPublicRoute = request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup'
 
   if (
     !user &&
-    !isAuthRoute
+    !isAuthRoute &&
+    !isLandingPage
   ) {
-    // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  if (user && isPublicRoute) {
-      // user is already logged in, redirect to dashboard
+  if (user && (isPublicRoute || isLandingPage)) {
       const url = request.nextUrl.clone()
-      url.pathname = '/'
+      url.pathname = '/dashboard'
       return NextResponse.redirect(url)
   }
 
