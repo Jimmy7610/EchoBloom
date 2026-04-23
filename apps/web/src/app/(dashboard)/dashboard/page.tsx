@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { generateSummary, classifyResponseSentiment } from '@echobloom/ai'
 import type { ResponseData } from '@echobloom/ai'
-import { TrendChart } from './TrendChart'
+import { TrendChart } from '../TrendChart'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
