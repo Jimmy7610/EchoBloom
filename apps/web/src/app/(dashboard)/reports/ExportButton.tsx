@@ -62,7 +62,7 @@ export function ExportButton({ data, promptMap, filename }: ExportButtonProps) {
   return (
     <button
       onClick={handleExport}
-      className="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors"
+      className="inline-flex items-center justify-center px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-brand-500/10 active:scale-95"
     >
       Export Responses to CSV
     </button>
