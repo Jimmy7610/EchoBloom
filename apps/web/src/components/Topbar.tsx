@@ -1,5 +1,6 @@
-import { Bell, Search, Sprout } from "lucide-react";
+import { Search, Sprout } from "lucide-react";
 import Link from "next/link";
+import { TopbarActions } from "./TopbarActions";
 
 export function Topbar() {
   return (
@@ -20,10 +21,7 @@ export function Topbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-white"></span>
-        </button>
+        <TopbarActions />
       </div>
     </header>
   );
