@@ -8,6 +8,15 @@ export default async function CreateWorkspacePage({
   const params = await searchParams
 
   return (
+    <div className="bg-surface-900 border border-surface-800 rounded-3xl p-8 shadow-2xl">
+      <form className="flex flex-col gap-4">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-surface-50 tracking-tight">Create Workspace</h1>
+          <p className="text-sm text-surface-400 mt-2">Let's set up your first workspace.</p>
+        </div>
+        
+        {params?.message && (
+          <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-center rounded-xl text-sm mb-2">
             {params.message}
           </div>
         )}
