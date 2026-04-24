@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { generateSummary, classifyResponseSentiment } from '@echobloom/ai'
 import type { ResponseData } from '@echobloom/ai'
 import { TrendChart } from '../TrendChart'
+import { AISummaryPanel } from './AISummaryPanel'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -38,8 +39,17 @@ export default async function DashboardPage() {
   const responses: ResponseData[] = rawResponses || []
   const totalResponses = responses.length
 
-  // Run AI analysis
+  // Run rule-based AI analysis as fallback
   const aiSummary = generateSummary(responses)
+
+  // Fetch initial AI insight from DB
+  const { data: initialInsight } = await supabase
+    .from('insights')
+    .select('id, summary, themes, suggested_actions, sentiment_distribution, risk_level, updated_at')
+    .eq('workspace_id', workspace.id)
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
   // Build daily trend data (last 7 days)
   const trendData = buildDailyTrend(responses)
@@ -135,55 +145,12 @@ export default async function DashboardPage() {
           <TrendChart data={trendData} />
         </div>
 
-        <div className="bg-surface-900 rounded-xl border border-surface-800 shadow-sm p-6 relative overflow-hidden">
-          <div className="absolute -right-10 -top-10 w-40 h-40 bg-brand-500/10 rounded-full blur-2xl pointer-events-none"></div>
-          <h2 className="text-lg font-semibold text-surface-50 mb-4 relative z-10 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
-            AI Summary
-          </h2>
-          <div className="space-y-4 relative z-10">
-            {/* Sentiment Breakdown */}
-            <div className="flex gap-2 mb-3">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                👍 {aiSummary.sentimentBreakdown.positive}
-              </span>
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-800 text-surface-300 border border-surface-700">
-                😐 {aiSummary.sentimentBreakdown.neutral}
-              </span>
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                👎 {aiSummary.sentimentBreakdown.negative}
-              </span>
-            </div>
-
-            <p className="text-sm text-surface-400 leading-relaxed">
-              {aiSummary.summary}
-            </p>
-
-            {/* Themes */}
-            {aiSummary.themes.length > 0 && (
-              <div className="pt-4 border-t border-surface-800">
-                <h3 className="text-sm font-medium text-surface-50 mb-2">Recurring Themes:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {aiSummary.themes.map((theme, i) => (
-                    <span key={i} className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20">
-                      {theme}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Suggested Actions */}
-            <div className="pt-4 border-t border-surface-800">
-              <h3 className="text-sm font-medium text-surface-50 mb-2">Suggested Actions:</h3>
-              <ul className="text-sm text-surface-400 list-disc pl-4 space-y-1">
-                {aiSummary.suggestedActions.map((action, i) => (
-                  <li key={i}>{action}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        <AISummaryPanel 
+          workspaceId={workspace.id}
+          fallbackSummary={aiSummary}
+          initialInsight={initialInsight}
+          responseCount={responses.length}
+        />
       </div>
 
       {/* Recent Responses */}

@@ -103,8 +103,11 @@ CREATE TABLE IF NOT EXISTS public.insights (
     summary TEXT NOT NULL,
     themes JSONB DEFAULT '[]'::jsonb,
     suggested_actions JSONB DEFAULT '[]'::jsonb,
+    sentiment_distribution JSONB DEFAULT '{"positive": 0, "neutral": 0, "negative": 0}'::jsonb,
+    risk_level TEXT,
     period_start TIMESTAMP WITH TIME ZONE,
     period_end TIMESTAMP WITH TIME ZONE,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -150,7 +153,7 @@ BEGIN
     FOR t IN 
         SELECT table_name FROM information_schema.tables 
         WHERE table_schema = 'public' 
-        AND table_name IN ('profiles', 'workspaces', 'memberships', 'prompts', 'responses')
+        AND table_name IN ('profiles', 'workspaces', 'memberships', 'prompts', 'responses', 'insights')
     LOOP
         IF NOT EXISTS (SELECT 1 FROM information_schema.triggers WHERE event_object_table = t AND trigger_name = 'tr_set_updated_at') THEN
             EXECUTE format('CREATE TRIGGER tr_set_updated_at BEFORE UPDATE ON public.%I FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();', t);
