@@ -2,6 +2,8 @@
 
 import { X, Sprout, MessageSquarePlus, Activity, Download, Info } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 interface HelpModalProps {
   isOpen: boolean
@@ -9,9 +11,15 @@ interface HelpModalProps {
 }
 
 export function HelpModal({ isOpen, onClose }: HelpModalProps) {
-  if (!isOpen) return null
+  const [mounted, setMounted] = useState(false)
 
-  return (
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!isOpen || !mounted) return null
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-950/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-surface-900 rounded-2xl shadow-2xl border border-surface-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         <div className="p-6 border-b border-surface-800 flex items-center justify-between">
@@ -97,6 +105,7 @@ export function HelpModal({ isOpen, onClose }: HelpModalProps) {
           </section>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
