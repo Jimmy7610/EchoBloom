@@ -223,8 +223,15 @@ CREATE POLICY "Workspace isolation - INSERT" ON public.prompts FOR INSERT WITH C
 CREATE POLICY "Workspace isolation - UPDATE" ON public.prompts FOR UPDATE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
 CREATE POLICY "Anyone can insert responses" ON public.responses FOR INSERT WITH CHECK (true);
 CREATE POLICY "Workspace isolation - SELECT responses" ON public.responses FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Workspace isolation - DELETE responses" ON public.responses FOR DELETE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
+
 CREATE POLICY "Workspace isolation - SELECT insights" ON public.insights FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = insights.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Workspace isolation - INSERT insights" ON public.insights FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Workspace isolation - DELETE insights" ON public.insights FOR DELETE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = insights.workspace_id AND user_id = auth.uid()));
+
 CREATE POLICY "Workspace isolation - SELECT reports" ON public.reports FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = reports.workspace_id AND user_id = auth.uid()));
+
 CREATE POLICY "Workspace isolation - SELECT notifications" ON public.notifications FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
 CREATE POLICY "Anyone can insert notifications" ON public.notifications FOR INSERT WITH CHECK (true);
 CREATE POLICY "Workspace isolation - UPDATE notifications" ON public.notifications FOR UPDATE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Workspace isolation - DELETE notifications" ON public.notifications FOR DELETE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));

@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { classifyResponseSentiment } from '@echobloom/ai'
 
-const ADMIN_EMAIL = 'eliassonjimmy76@gmail.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'eliassonjimmy76@gmail.com'
 const DEMO_PREFIX = '[DEMO]'
 
 async function verifyAdmin() {
@@ -83,8 +83,12 @@ export async function generateDemoResponsesAction(count: number, mode: 'random' 
     })
   }
 
+  console.log(`[ADMIN] Inserting ${responses.length} responses for workspace ${workspaceId}`)
   const { error } = await supabase.from('responses').insert(responses)
-  if (error) throw error
+  if (error) {
+    console.error('[ADMIN] Failed to insert responses:', error)
+    throw error
+  }
 
   revalidatePath('/dashboard')
   revalidatePath('/admin')
