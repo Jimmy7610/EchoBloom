@@ -41,7 +41,7 @@ export default async function DashboardLayout({
     .limit(10)
 
   const adminEmail = process.env.ADMIN_EMAIL
-  const isAdmin = adminEmail && user.email === adminEmail
+  const isAdmin = !!(adminEmail && user.email === adminEmail)
 
   return (
     <>
