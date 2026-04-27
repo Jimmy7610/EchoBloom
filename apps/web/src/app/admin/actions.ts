@@ -9,14 +9,14 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { classifyResponseSentiment } from '@echobloom/ai'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'eliassonjimmy76@gmail.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 const DEMO_PREFIX = '[DEMO]'
 
 async function verifyAdmin() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user || user.email !== ADMIN_EMAIL) {
+  if (!user || !ADMIN_EMAIL || user.email !== ADMIN_EMAIL) {
     throw new Error('Unauthorized')
   }
 
