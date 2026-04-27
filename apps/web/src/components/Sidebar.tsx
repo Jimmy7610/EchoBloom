@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, MessageSquarePlus, Inbox, BarChart3, Settings, Sprout, LogOut } from "lucide-react";
+import { LayoutDashboard, MessageSquarePlus, Inbox, BarChart3, Settings, Sprout, LogOut, ShieldAlert } from "lucide-react";
 import { signout } from "@/app/(auth)/actions";
 
-export function Sidebar({ userEmail, workspaceName }: { userEmail?: string, workspaceName?: string }) {
+export function Sidebar({ userEmail, workspaceName, isAdmin }: { userEmail?: string, workspaceName?: string, isAdmin?: boolean }) {
   const pathname = usePathname();
 
   const navItems = [
@@ -15,6 +15,10 @@ export function Sidebar({ userEmail, workspaceName }: { userEmail?: string, work
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
+
+  if (isAdmin) {
+    navItems.push({ name: "Admin Panel", href: "/admin", icon: ShieldAlert });
+  }
 
   return (
     <aside className="hidden md:flex w-64 bg-surface-900 border-r border-surface-800 h-screen flex-col fixed left-0 top-0">

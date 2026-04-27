@@ -40,9 +40,11 @@ export default async function DashboardLayout({
     .order('created_at', { ascending: false })
     .limit(10)
 
+  const isAdmin = user.email === (process.env.ADMIN_EMAIL || 'eliassonjimmy76@gmail.com')
+
   return (
     <>
-      <Sidebar userEmail={user.email} workspaceName={workspaceName} />
+      <Sidebar userEmail={user.email} workspaceName={workspaceName} isAdmin={isAdmin} />
       <div className="pl-0 md:pl-64 flex flex-col min-h-screen">
         <Topbar workspaceId={workspaceId} initialNotifications={notifications || []} />
         <main className="flex-1 p-8">
