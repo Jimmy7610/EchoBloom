@@ -2,20 +2,22 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'eliassonjimmy76@gmail.com'
-
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Requirement A.2: Redirect to login if unauthenticated
-  // Middleware handles this, but we'll double-check here for safety.
   if (!user) {
     redirect('/login')
   }
 
+  const adminEmails = [
+    'eliassonjimmy76@gmail.com',
+    'eliassonjimmy76+admin@gmail.com',
+    process.env.ADMIN_EMAIL
+  ].filter(Boolean)
+
   // Requirement A.1 & A.3: Only allow authenticated admin email
-  if (user.email !== ADMIN_EMAIL) {
+  if (!adminEmails.includes(user.email)) {
     redirect('/dashboard')
   }
 

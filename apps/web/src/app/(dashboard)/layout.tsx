@@ -40,7 +40,13 @@ export default async function DashboardLayout({
     .order('created_at', { ascending: false })
     .limit(10)
 
-  const isAdmin = user.email === (process.env.ADMIN_EMAIL || 'eliassonjimmy76@gmail.com')
+  const adminEmails = [
+    'eliassonjimmy76@gmail.com',
+    'eliassonjimmy76+admin@gmail.com',
+    process.env.ADMIN_EMAIL
+  ].filter(Boolean)
+  
+  const isAdmin = adminEmails.includes(user.email)
 
   return (
     <>
