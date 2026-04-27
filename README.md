@@ -110,6 +110,12 @@ To quickly experience the full power of the AI dashboard, you can populate your 
 node scripts/seed_demo.js
 ```
 
+### Admin Testing Panel
+For manual testing and verification, visit `/admin` (locked to your admin email). This panel allows you to:
+- Generate 20-100 demo responses with specific sentiment patterns (e.g., negative spikes).
+- Create and toggle different prompt types (Text, Emoji, Rating).
+- Simulate system notifications and AI summary fallbacks.
+
 ---
 
 ## ✅ Current Status
@@ -118,15 +124,17 @@ node scripts/seed_demo.js
 | :--- | :--- |
 | **Auth & Workspace** | ✅ Stable |
 | **Prompt Engine** | ✅ Beta Ready |
-| **AI Sentiment** | ✅ Beta Ready (Rule-based) |
+| **AI Sentiment** | ✅ Beta Ready (LLM + Rule-based) |
 | **Reporting** | ✅ Functional (CSV) |
-| **LLM Insights** | 🚧 Planned (Sprint 7) |
+| **LLM Insights** | ✅ Stable (GPT-4o-mini) |
+| **Admin Panel** | ✅ Active |
 | **Slack Integration** | 📅 Roadmap |
 
 ---
 
 ## 📖 Documents / Source of Truth
 
+- **Admin Setup**: [Admin Testing Guide](documents/build/Admin_Testing.md)
 - **Database**: [Schema definition](documents/build/Schema.sql)
 - **AI Engine**: [Logic implementation](packages/ai/src/index.ts)
 - **Widget API**: [Route handlers](apps/web/src/app/api/v1/)
