@@ -10,10 +10,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect('/login')
   }
 
+  const adminEmails = ['eliassonjimmy76@gmail.com', 'eliassonjimmy76+admin@gmail.com']
   const adminEmail = process.env.ADMIN_EMAIL
   
-  // Requirement A.1 & A.3: Only allow authenticated admin email via ENV
-  if (!adminEmail || user.email !== adminEmail) {
+  // Requirement A.1 & A.3: Only allow authenticated admin email via ENV or hardcoded fallback
+  if ((!adminEmail || user.email !== adminEmail) && !adminEmails.includes(user.email)) {
     redirect('/dashboard')
   }
 
