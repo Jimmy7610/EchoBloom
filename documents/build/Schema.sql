@@ -216,22 +216,20 @@ CREATE POLICY "Memberships - Self SELECT" ON public.memberships FOR SELECT TO au
 CREATE POLICY "Memberships - Owner INSERT" ON public.memberships FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid() OR EXISTS (SELECT 1 FROM public.workspaces WHERE id = workspace_id AND owner_user_id = auth.uid()));
 
 -- Prompts
-CREATE POLICY "Prompts - Member SELECT" ON public.prompts FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Prompts - Member INSERT" ON public.prompts FOR INSERT TO authenticated WITH CHECK (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Prompts - Member UPDATE" ON public.prompts FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Prompts - Workspace member SELECT" ON public.prompts FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Prompts - Workspace member INSERT" ON public.prompts FOR INSERT TO authenticated WITH CHECK (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Prompts - Workspace member UPDATE" ON public.prompts FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
 
 -- Responses (No public INSERT, routed through Server API)
-CREATE POLICY "Responses - Member SELECT" ON public.responses FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Responses - Member DELETE" ON public.responses FOR DELETE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Responses - Workspace member SELECT" ON public.responses FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
 
 -- Insights
-CREATE POLICY "Insights - Member SELECT" ON public.insights FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = insights.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Insights - Workspace member SELECT" ON public.insights FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = insights.workspace_id AND user_id = auth.uid()));
 
 -- Reports
-CREATE POLICY "Reports - Member SELECT" ON public.reports FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = reports.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Reports - Workspace member SELECT" ON public.reports FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = reports.workspace_id AND user_id = auth.uid()));
 
 -- Notifications
-CREATE POLICY "Notifications - Member SELECT" ON public.notifications FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Notifications - Member UPDATE" ON public.notifications FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Notifications - Member DELETE" ON public.notifications FOR DELETE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Notifications - Workspace member SELECT" ON public.notifications FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Notifications - Workspace member UPDATE" ON public.notifications FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
 
