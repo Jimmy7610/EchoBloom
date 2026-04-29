@@ -191,47 +191,47 @@ ALTER TABLE public.insights ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
--- 7. Policies (Drop if exists then create)
-DO $$ BEGIN
-    DROP POLICY IF EXISTS "Users can view their own profile" ON public.profiles;
-    DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
-    DROP POLICY IF EXISTS "Users can view workspaces they are members of" ON public.workspaces;
-    DROP POLICY IF EXISTS "Users can create workspaces" ON public.workspaces;
-    DROP POLICY IF EXISTS "Users can view their own memberships" ON public.memberships;
-    DROP POLICY IF EXISTS "Users can create their own memberships" ON public.memberships;
-    DROP POLICY IF EXISTS "Workspace isolation - SELECT" ON public.prompts;
-    DROP POLICY IF EXISTS "Workspace isolation - INSERT" ON public.prompts;
-    DROP POLICY IF EXISTS "Workspace isolation - UPDATE" ON public.prompts;
-    DROP POLICY IF EXISTS "Anyone can insert responses" ON public.responses;
-    DROP POLICY IF EXISTS "Workspace isolation - SELECT responses" ON public.responses;
-    DROP POLICY IF EXISTS "Workspace isolation - SELECT insights" ON public.insights;
-    DROP POLICY IF EXISTS "Workspace isolation - SELECT reports" ON public.reports;
-    DROP POLICY IF EXISTS "Workspace isolation - SELECT notifications" ON public.notifications;
-    DROP POLICY IF EXISTS "Anyone can insert notifications" ON public.notifications;
-    DROP POLICY IF EXISTS "Workspace isolation - UPDATE notifications" ON public.notifications;
+-- 7. Policies (Clean Slate)
+DO $$ 
+DECLARE
+    pol record;
+BEGIN
+    FOR pol IN (SELECT policyname, tablename FROM pg_policies WHERE schemaname = 'public') 
+    LOOP
+        EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', pol.policyname, pol.tablename);
+    END LOOP;
 END $$;
 
--- Re-create Policies
-CREATE POLICY "Users can view their own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Users can view workspaces they are members of" ON public.workspaces FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = id AND user_id = auth.uid()));
-CREATE POLICY "Users can create workspaces" ON public.workspaces FOR INSERT WITH CHECK (auth.uid() = owner_user_id);
-CREATE POLICY "Users can view their own memberships" ON public.memberships FOR SELECT USING (user_id = auth.uid());
-CREATE POLICY "Users can create their own memberships" ON public.memberships FOR INSERT WITH CHECK (user_id = auth.uid());
-CREATE POLICY "Workspace isolation - SELECT" ON public.prompts FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Workspace isolation - INSERT" ON public.prompts FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Workspace isolation - UPDATE" ON public.prompts FOR UPDATE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Anyone can insert responses" ON public.responses FOR INSERT WITH CHECK (true);
-CREATE POLICY "Workspace isolation - SELECT responses" ON public.responses FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Workspace isolation - DELETE responses" ON public.responses FOR DELETE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
+-- Profiles
+CREATE POLICY "Profiles - Owner only SELECT" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
+CREATE POLICY "Profiles - Owner only UPDATE" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
 
-CREATE POLICY "Workspace isolation - SELECT insights" ON public.insights FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = insights.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Workspace isolation - INSERT insights" ON public.insights FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Workspace isolation - DELETE insights" ON public.insights FOR DELETE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = insights.workspace_id AND user_id = auth.uid()));
+-- Workspaces
+CREATE POLICY "Workspaces - Member SELECT" ON public.workspaces FOR SELECT TO authenticated USING (auth.uid() = owner_user_id OR EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = id AND user_id = auth.uid()));
+CREATE POLICY "Workspaces - Owner INSERT" ON public.workspaces FOR INSERT TO authenticated WITH CHECK (auth.uid() = owner_user_id);
+CREATE POLICY "Workspaces - Owner UPDATE" ON public.workspaces FOR UPDATE TO authenticated USING (auth.uid() = owner_user_id);
 
-CREATE POLICY "Workspace isolation - SELECT reports" ON public.reports FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = reports.workspace_id AND user_id = auth.uid()));
+-- Memberships
+CREATE POLICY "Memberships - Self SELECT" ON public.memberships FOR SELECT TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "Memberships - Owner INSERT" ON public.memberships FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid() OR EXISTS (SELECT 1 FROM public.workspaces WHERE id = workspace_id AND owner_user_id = auth.uid()));
 
-CREATE POLICY "Workspace isolation - SELECT notifications" ON public.notifications FOR SELECT USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Anyone can insert notifications" ON public.notifications FOR INSERT WITH CHECK (true);
-CREATE POLICY "Workspace isolation - UPDATE notifications" ON public.notifications FOR UPDATE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
-CREATE POLICY "Workspace isolation - DELETE notifications" ON public.notifications FOR DELETE USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
+-- Prompts
+CREATE POLICY "Prompts - Member SELECT" ON public.prompts FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Prompts - Member INSERT" ON public.prompts FOR INSERT TO authenticated WITH CHECK (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Prompts - Member UPDATE" ON public.prompts FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = prompts.workspace_id AND user_id = auth.uid()));
+
+-- Responses (No public INSERT, routed through Server API)
+CREATE POLICY "Responses - Member SELECT" ON public.responses FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Responses - Member DELETE" ON public.responses FOR DELETE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = responses.workspace_id AND user_id = auth.uid()));
+
+-- Insights
+CREATE POLICY "Insights - Member SELECT" ON public.insights FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = insights.workspace_id AND user_id = auth.uid()));
+
+-- Reports
+CREATE POLICY "Reports - Member SELECT" ON public.reports FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = reports.workspace_id AND user_id = auth.uid()));
+
+-- Notifications
+CREATE POLICY "Notifications - Member SELECT" ON public.notifications FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Notifications - Member UPDATE" ON public.notifications FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
+CREATE POLICY "Notifications - Member DELETE" ON public.notifications FOR DELETE TO authenticated USING (EXISTS (SELECT 1 FROM public.memberships WHERE workspace_id = notifications.workspace_id AND user_id = auth.uid()));
+

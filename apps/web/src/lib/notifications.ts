@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export type NotificationType = 'sentiment_alert' | 'milestone_1' | 'milestone_10' | 'prompt_activated' | 'prompt_paused'
 
@@ -9,7 +9,7 @@ export async function createNotification(params: {
   message: string
   relatedPromptId?: string
 }) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   
   // Basic de-duplication for milestones to avoid spam
   if (params.type.startsWith('milestone')) {
