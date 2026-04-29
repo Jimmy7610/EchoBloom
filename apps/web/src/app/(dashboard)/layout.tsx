@@ -42,7 +42,7 @@ export default async function DashboardLayout({
 
   const adminEmails = ['eliassonjimmy76@gmail.com', 'eliassonjimmy76+admin@gmail.com']
   const adminEmail = process.env.ADMIN_EMAIL
-  const isAdmin = !!(adminEmail && user.email === adminEmail) || adminEmails.includes(user.email)
+  const isAdmin = !!(adminEmail && user.email === adminEmail) || adminEmails.includes(user.email ?? '')
 
   return (
     <>
