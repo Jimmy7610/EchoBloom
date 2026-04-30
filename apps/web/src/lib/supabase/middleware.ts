@@ -42,11 +42,13 @@ export async function updateSession(request: NextRequest) {
   const isLandingPage = request.nextUrl.pathname === '/'
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup') || request.nextUrl.pathname.startsWith('/auth')
   const isPublicRoute = request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup'
+  const isApiRoute = request.nextUrl.pathname.startsWith('/api')
 
   if (
     !user &&
     !isAuthRoute &&
-    !isLandingPage
+    !isLandingPage &&
+    !isApiRoute
   ) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
