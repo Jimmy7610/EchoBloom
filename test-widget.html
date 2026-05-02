@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EchoBloom Widget Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    header {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: center;
+    }
+    main {
+      padding: 4rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { margin-top: 0; }
+    .content-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to ACME Corp</h1>
+    <p>This is a dummy application to test the EchoBloom widget embed.</p>
+  </header>
+
+  <main>
+    <div class="content-box">
+      <h2>Main Content</h2>
+      <p>Imagine this is your SaaS dashboard. The EchoBloom widget should appear in the bottom right corner automatically.</p>
+    </div>
+    
+    <div class="content-box">
+      <h2>Another Section</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+  </main>
+
+  <!-- ECHOBLOOM WIDGET EMBED CODE -->
+  <script 
+    src="https://echo-bloom-web.vercel.app/echobloom-widget.iife.js" 
+    data-workspace-id="c4387027-36b6-4959-83a2-81268e41de12"
+    data-api-url="https://echo-bloom-web.vercel.app"
+  ></script>
+
+  <script>
+    // Helper to clear session storage if we want to test it again
+    console.log("To see the widget again after closing, run: sessionStorage.clear(); location.reload();");
+  </script>
+</body>
+</html>
